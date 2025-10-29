@@ -11,27 +11,11 @@ def ensure_roles_exist():
             frappe.logger().info(f"✅ Created missing Role: {role}")
     frappe.db.commit()
 
-
-def ensure_workflow_actions_exist():
-    """Ensure required workflow actions exist before using them."""
-    for action in ["Submit", "Approve", "Reject"]:
-        if not frappe.db.exists("Workflow Action Master", action):
-            frappe.get_doc({
-                "doctype": "Workflow Action Master",
-                "workflow_action_name": action
-            }).insert(ignore_permissions=True)
-            frappe.logger().info(f"✅ Created missing Workflow Action: {action}")
-    frappe.db.commit()
-
-
 def execute():
     ensure_roles_exist()
-    ensure_workflow_actions_exist()
 
-    # Check if workflow already exists
-    if frappe.db.exists("Workflow", "Travel Request Approval Workflow"):
-        frappe.logger().info("⚠️ Workflow already exists. Skipping creation.")
-        return
+    workflow_name = "Travel Request Approval Workflow"
+    doctype = "Travel Request"
 
     # Define workflow states
     states = [
@@ -43,41 +27,41 @@ def execute():
 
     # Define transitions
     transitions = [
-        {
-            "state": "Draft",
-            "action": "Submit",
-            "next_state": "Pending",
-            "allowed": "Employee",
-            "allow_self_approval": 0
-        },
-        {
-            "state": "Pending",
-            "action": "Approve",
-            "next_state": "Approved",
-            "allowed": "HR Manager",
-            "allow_self_approval": 0
-        },
-        {
-            "state": "Pending",
-            "action": "Reject",
-            "next_state": "Rejected",
-            "allowed": "HR Manager",
-            "allow_self_approval": 0
-        }
+        {"state": "Draft", "action": "Submit", "next_state": "Pending", "allowed": "Employee", "allow_self_approval": 0},
+        {"state": "Pending", "action": "Approve", "next_state": "Approved", "allowed": "HR Manager", "allow_self_approval": 0},
+        {"state": "Pending", "action": "Reject", "next_state": "Rejected", "allowed": "HR Manager", "allow_self_approval": 0},
     ]
 
-    # Create the workflow
-    workflow = frappe.get_doc({
-        "doctype": "Workflow",
-        "workflow_name": "Travel Request Approval Workflow",
-        "document_type": "Travel Request",
-        "is_active": 1,
-        "override_status": "status",
-        "send_email_alert": 0,
-        "states": states,
-        "transitions": transitions
-    })
+    if frappe.db.exists("Workflow", workflow_name):
+        workflow = frappe.get_doc("Workflow", workflow_name)
+        # Update missing states
+        existing_states = [s.state for s in workflow.states]
+        for s in states:
+            if s["state"] not in existing_states:
+                workflow.append("states", s)
+                frappe.logger().info(f"✅ Added missing state: {s['state']}")
 
-    workflow.insert(ignore_permissions=True)
-    frappe.db.commit()
-    frappe.logger().info("✅ Created 'Travel Request Approval Workflow' successfully.")
+        # Update missing transitions
+        existing_transitions = [(t.state, t.action) for t in workflow.transitions]
+        for t in transitions:
+            if (t["state"], t["action"]) not in existing_transitions:
+                workflow.append("transitions", t)
+                frappe.logger().info(f"✅ Added missing transition: {t['action']} from {t['state']}")
+
+        workflow.save(ignore_permissions=True)
+        frappe.db.commit()
+        frappe.logger().info(f"✅ Updated existing workflow: {workflow_name}")
+    else:
+        workflow = frappe.get_doc({
+            "doctype": "Workflow",
+            "workflow_name": workflow_name,
+            "document_type": doctype,
+            "is_active": 1,
+            "override_status": "status",
+            "send_email_alert": 0,
+            "states": states,
+            "transitions": transitions
+        })
+        workflow.insert(ignore_permissions=True)
+        frappe.db.commit()
+        frappe.logger().info(f"✅ Created new workflow: {workflow_name}")
