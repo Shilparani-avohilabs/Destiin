@@ -42,7 +42,7 @@ def create_booking(data):
     
 
 
-# ✅ Added update_booking API (newly added code)
+
 @frappe.whitelist(allow_guest=False)
 def update_booking(employee_id, data):
     """Update an existing booking based on employee_id"""
