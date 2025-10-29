@@ -20,11 +20,18 @@ def get_all_bookings():
 
 
 @frappe.whitelist(allow_guest=False)
-def create_booking(data):
+def create_booking():
     """Create a new booking"""
     import json
     try:
-        data = json.loads(data) if isinstance(data, str) else data
+        # Handle both raw JSON and x-www-form-urlencoded inputs
+        if frappe.form_dict.get("data"):
+            data = json.loads(frappe.form_dict.data)
+        elif frappe.request.data:
+            data = json.loads(frappe.request.data)
+        else:
+            frappe.throw("Missing request body")
+        # data = json.loads(data) if isinstance(data, str) else data
         doc = frappe.get_doc({
             "doctype": "Travel Bookings",
             **data
@@ -44,11 +51,22 @@ def create_booking(data):
 
 
 @frappe.whitelist(allow_guest=False)
-def update_booking(employee_id, data):
+def update_booking():
     """Update an existing booking based on employee_id"""
     import json
     try:
-        data = json.loads(data) if isinstance(data, str) else data
+        # Handle both raw JSON and x-www-form-urlencoded inputs
+        if frappe.form_dict.get("data"):
+            data = json.loads(frappe.form_dict.data)
+        elif frappe.request.data:
+            data = json.loads(frappe.request.data)
+        else:
+            frappe.throw("Missing request body")
+
+        # Extract employee_id
+        employee_id = data.get("employee_id")
+        if not employee_id:
+            frappe.throw("Employee ID is required")
 
         # Find booking by employee_id
         booking_name = frappe.db.get_value("Travel Bookings", {"employee_id": employee_id}, "name")
