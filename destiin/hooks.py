@@ -156,7 +156,7 @@ doc_events = {
         ]
     },
     "Travel Request": {
-        "after_insert": "travel.travel_app.custom.auto_creations.auto_submit_travel_request.auto_submit_travel_request"
+        "after_insert": "destiin.destiin.custom.auto_creations.auto_submit_travel_request.auto_submit_travel_request"
     }
 }
 
