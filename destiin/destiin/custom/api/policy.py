@@ -15,13 +15,13 @@ def upload_policy_to_external_api(doc, method):
         if not doc.policy_file:
             frappe.throw("Please attach a PDF file before saving the Travel Policy Data.")
 
-        # 🧠 Avoid duplicate trigger immediately after insert
+        # Avoid duplicate trigger immediately after insert
         if method == "on_update" and getattr(frappe.flags, "skip_next_update_upload", False):
             logger.info("Skipping on_update trigger immediately after insert.")
             frappe.flags.skip_next_update_upload = False
             return
 
-        # --- 1️⃣ Get file path safely ---
+        # --- 1️⃣ Resolve file path safely ---
         file_doc = frappe.get_doc("File", {"file_url": doc.policy_file})
 
         if file_doc.file_url.startswith("/private/files/"):
@@ -44,19 +44,20 @@ def upload_policy_to_external_api(doc, method):
 
         logger.info(f"External API Response: {response.status_code} - {response.text}")
 
-        if response.status_code == 200:
-            api_response_msg = "✅ Successfully uploaded to external API."
-        else:
-            api_response_msg = f"❌ Upload failed ({response.status_code}): {response.text}"
+        api_response_msg = (
+            "✅ Successfully uploaded to external API." 
+            if response.status_code == 200 
+            else f"❌ Upload failed ({response.status_code}): {response.text}"
+        )
 
         # --- 3️⃣ Extract PDF text ---
         pdf_reader = PdfReader(file_path)
         pdf_text = "".join(page.extract_text() or "" for page in pdf_reader.pages)
-        pdf_text = pdf_text[:5000]  # truncate long text
+        pdf_text = pdf_text[:5000]  # truncate long text to avoid storing too much
 
         # --- 4️⃣ Create or Update Employee Policy Data ---
         existing_policy_data = frappe.db.exists("Employee Policy Data", {
-            "policy_name": doc.name,
+            "policy_name": doc.name1,  # Use human-readable policy name
             "company": doc.company
         })
 
@@ -70,13 +71,13 @@ def upload_policy_to_external_api(doc, method):
             # Create new record
             frappe.get_doc({
                 "doctype": "Employee Policy Data",
-                "policy_name": doc.name,
+                "policy_name": doc.name1,  # Use human-readable policy name
                 "company": doc.company,
                 "file_content": pdf_text
             }).insert(ignore_permissions=True)
             action_message = "✅ New policy created and stored in Employee Policy Data."
 
-            # 🧠 Prevent immediate on_update trigger
+            # Prevent immediate on_update trigger
             frappe.flags.skip_next_update_upload = True
 
         # --- 5️⃣ Update API response in Travel Policy Data ---
