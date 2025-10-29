@@ -1,7 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
- "creation": "2025-10-29 10:33:59.383203",
+ "creation": "2025-10-30 00:16:24.606498",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
@@ -18,7 +18,7 @@
   {
    "fieldname": "company",
    "fieldtype": "Data",
-   "label": "Company "
+   "label": "Company"
   },
   {
    "fieldname": "file_content",
@@ -29,7 +29,7 @@
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-29 10:35:01.561472",
+ "modified": "2025-10-30 00:17:44.415569",
  "modified_by": "Administrator",
  "module": "Destiin",
  "name": "Employee Policy Data",
