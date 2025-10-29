@@ -5,18 +5,47 @@
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
-  "section_break_27uw"
+  "activity_details_section",
+  "booking_stage",
+  "employee",
+  "employee_name",
+  "company"
  ],
  "fields": [
   {
-   "fieldname": "section_break_27uw",
-   "fieldtype": "Section Break"
+   "fieldname": "activity_details_section",
+   "fieldtype": "Section Break",
+   "label": "Activity Details"
+  },
+  {
+   "fieldname": "booking_stage",
+   "fieldtype": "Select",
+   "label": "Booking Stage",
+   "options": "hotel_search\nadded_to_cart\nroom_confirmation\npayment_method_added\nconfirm_booking\npayment_initiated\npayment_failure\npayment_success\npayment_pending\nbooking_success\nbooking_failure"
+  },
+  {
+   "fieldname": "employee",
+   "fieldtype": "Link",
+   "label": "Employee",
+   "options": "Employee"
+  },
+  {
+   "fetch_from": "employee.company",
+   "fieldname": "company",
+   "fieldtype": "Data",
+   "label": "Company"
+  },
+  {
+   "fetch_from": "employee.employee_name",
+   "fieldname": "employee_name",
+   "fieldtype": "Data",
+   "label": "Employee Name"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-29 12:30:18.182572",
+ "modified": "2025-10-29 13:25:29.475812",
  "modified_by": "Administrator",
  "module": "Destiin",
  "name": "Employee Activity",
