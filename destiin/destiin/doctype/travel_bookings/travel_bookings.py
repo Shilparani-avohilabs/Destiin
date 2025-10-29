@@ -39,3 +39,34 @@ def create_booking(data):
     except Exception as e:
         frappe.log_error(frappe.get_traceback(), "create_booking API Error")
         return {"success": False, "error": str(e)}
+    
+
+
+# ✅ Added update_booking API (newly added code)
+@frappe.whitelist(allow_guest=False)
+def update_booking(employee_id, data):
+    """Update an existing booking based on employee_id"""
+    import json
+    try:
+        data = json.loads(data) if isinstance(data, str) else data
+
+        # Find booking by employee_id
+        booking_name = frappe.db.get_value("Travel Bookings", {"employee_id": employee_id}, "name")
+        if not booking_name:
+            return {"success": False, "message": f"No booking found for Employee ID: {employee_id}"}
+
+        # Load and update the booking
+        doc = frappe.get_doc("Travel Bookings", booking_name)
+        doc.update(data)
+        doc.save(ignore_permissions=True)
+        frappe.db.commit()
+
+        return {
+            "success": True,
+            "message": f"Booking for Employee ID {employee_id} updated successfully",
+            "name": doc.name
+        }
+
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback(), "update_booking API Error")
+        return {"success": False, "error": str(e)}
