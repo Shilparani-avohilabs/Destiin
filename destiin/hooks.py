@@ -142,17 +142,17 @@ app_license = "mit"
 
 doc_events = {
     "Travel Policy Data": {
-        "after_insert": "travel.travel_app.custom.api.policy.upload_policy_to_external_api",
-        "on_update": "travel.travel_app.custom.api.policy.upload_policy_to_external_api"
+        "after_insert": "destiin.destiin.custom.api.policy.upload_policy_to_external_api",
+        "on_update": "destiin.destiin.custom.api.policy.upload_policy_to_external_api"
     },
     "Employee": {
         "after_insert": [
-            "travel.travel_app.custom.auto_creations.user_creation.create_user_for_manager",
-            "travel.travel_app.custom.auto_creations.auto_user_permission.create_user_permission_for_hr_manager"
+            "destiin.destiin.custom.auto_creations.user_creation.create_user_for_manager",
+            "destiin.destiin.custom.auto_creations.auto_user_permission.create_user_permission_for_hr_manager"
         ],
         "on_update": [
-            "travel.travel_app.custom.auto_creations.user_creation.create_user_for_manager",
-            "travel.travel_app.custom.auto_creations.auto_user_permission.create_user_permission_for_hr_manager"
+            "destiin.destiin.custom.auto_creations.user_creation.create_user_for_manager",
+            "destiin.destiin.custom.auto_creations.auto_user_permission.create_user_permission_for_hr_manager"
         ]
     },
     "Travel Request": {
