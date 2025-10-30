@@ -9,7 +9,8 @@
   "booking_stage",
   "employee",
   "employee_name",
-  "company"
+  "company",
+  "test_status"
  ],
  "fields": [
   {
@@ -21,7 +22,7 @@
    "fieldname": "booking_stage",
    "fieldtype": "Select",
    "label": "Booking Stage",
-   "options": "hotel_search\nadded_to_cart\nroom_confirmation\npayment_method_added\nconfirm_booking\npayment_initiated\npayment_failure\npayment_success\npayment_pending\nbooking_success\nbooking_failure"
+   "options": "hotel_search\nadded_to_cart\nroom_confirmation\npayment_method_added\nconfirm_booking\npayment_initiated\npayment_failure\npayment_success\npayment_pending\nbooking_success\nbooking_failure\nview_hotel_details\nroom_selected\npayment_details_entered\nguest_details_entered"
   },
   {
    "fieldname": "employee",
@@ -40,12 +41,18 @@
    "fieldname": "employee_name",
    "fieldtype": "Data",
    "label": "Employee Name"
+  },
+  {
+   "fieldname": "test_status",
+   "fieldtype": "Select",
+   "label": "Test Status",
+   "options": "hotel_search\nadded_to_cart\nroom_confirmation\npayment_method_added\nconfirm_booking\npayment_initiated\npayment_failure\npayment_success\npayment_pending\nbooking_success\nbooking_failure\nview_hotel_details\nroom_selected\npayment_details_entered\nguest_details_entered"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-10-29 13:25:29.475812",
+ "modified": "2025-10-30 11:04:21.765790",
  "modified_by": "Administrator",
  "module": "Destiin",
  "name": "Employee Activity",

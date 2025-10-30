@@ -11,12 +11,45 @@ class TravelBookings(Document):
 
 @frappe.whitelist(allow_guest=False)
 def get_all_bookings():
-    """Fetch all travel bookings"""
-    bookings = frappe.get_all(
-        "Travel Bookings",
-        fields=["name", "employee_name", "booking_id", "hotel_name", "check_in_date", "check_out_date", "booking_status"]
-    )
-    return bookings
+    import json
+    """Fetch all travel bookings for a specific employee"""
+    try:
+        # Handle both form and JSON request payloads
+        if frappe.form_dict.get("data"):
+            data = json.loads(frappe.form_dict.data)
+        elif frappe.request.data:
+            data = json.loads(frappe.request.data)
+        else:
+            frappe.throw("Missing request body")
+
+        employee_id = data.get("employee_id")
+        if not employee_id:
+            frappe.throw("Employee ID is required")
+
+        bookings = frappe.get_all(
+            "Travel Bookings",
+            filters={"employee_id": employee_id},  # or "employee_id" if your field is named that way
+            fields=[
+                "name",
+                "employee_name",
+                "booking_id",
+                "hotel_name",
+                "check_in_date",
+                "check_out_date",
+                "booking_status"
+            ],
+            order_by="check_in_date desc"
+        )
+
+        return {
+            "success": True,
+            "count": len(bookings),
+            "data": bookings
+        }
+
+    except Exception as e:
+        frappe.log_error(frappe.get_traceback(), "get_all_bookings API Error")
+        return {"success": False, "error": str(e)}
 
 
 @frappe.whitelist(allow_guest=False)

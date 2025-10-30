@@ -82,7 +82,10 @@ def update_activity():
         # Fetch existing Employee Activity
         existing_doc = frappe.get_all(
             "Employee Activity",
-            filters={"employee": employee_id},
+            filters={
+           "employee": employee_id,
+        "booking_stage": ["!=", "booking_success"]
+    	},
             fields=["name"]
         )
 
